@@ -25,6 +25,7 @@ namespace Ryujinx.Graphics.Vulkan
         [
             ExtConditionalRendering.ExtensionName,
             ExtExtendedDynamicState.ExtensionName,
+            ExtExtendedDynamicState2.ExtensionName,
             ExtTransformFeedback.ExtensionName,
             KhrDrawIndirectCount.ExtensionName,
             KhrPushDescriptor.ExtensionName,
@@ -317,6 +318,17 @@ namespace Ryujinx.Graphics.Vulkan
                 features2.PNext = &supportedFeaturesCustomBorderColor;
             }
 
+            PhysicalDeviceExtendedDynamicState2FeaturesEXT supportedFeaturesExtExtendedDynamicState2 = new()
+            {
+                SType = StructureType.PhysicalDeviceExtendedDynamicState2FeaturesExt,
+                PNext = features2.PNext,
+            };
+
+            if (physicalDevice.IsDeviceExtensionPresent(ExtExtendedDynamicState2.ExtensionName))
+            {
+                features2.PNext = &supportedFeaturesExtExtendedDynamicState2;
+            }
+
             PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT supportedFeaturesPrimitiveTopologyListRestart = new()
             {
                 SType = StructureType.PhysicalDevicePrimitiveTopologyListRestartFeaturesExt,
@@ -419,6 +431,7 @@ namespace Ryujinx.Graphics.Vulkan
                 TessellationShader = supportedFeatures.TessellationShader,
                 VertexPipelineStoresAndAtomics = supportedFeatures.VertexPipelineStoresAndAtomics,
                 RobustBufferAccess = useRobustBufferAccess,
+                WideLines = supportedFeatures.WideLines,
                 SampleRateShading = supportedFeatures.SampleRateShading,
             };
 
@@ -475,6 +488,20 @@ namespace Ryujinx.Graphics.Vulkan
             };
 
             pExtendedFeatures = &featuresExtendedDynamicState;
+
+            if (physicalDevice.IsDeviceExtensionPresent(ExtExtendedDynamicState2.ExtensionName))
+            {
+                PhysicalDeviceExtendedDynamicState2FeaturesEXT featuresExtendedDynamicState2 = new()
+                {
+                    SType = StructureType.PhysicalDeviceExtendedDynamicState2FeaturesExt,
+                    PNext = pExtendedFeatures,
+                    ExtendedDynamicState2 = supportedFeaturesExtExtendedDynamicState2.ExtendedDynamicState2,
+                    ExtendedDynamicState2LogicOp = supportedFeaturesExtExtendedDynamicState2.ExtendedDynamicState2LogicOp,
+                    ExtendedDynamicState2PatchControlPoints = supportedFeaturesExtExtendedDynamicState2.ExtendedDynamicState2PatchControlPoints,
+                };
+
+                pExtendedFeatures = &featuresExtendedDynamicState2;
+            }
 
             PhysicalDeviceVulkan11Features featuresVk11 = new()
             {
