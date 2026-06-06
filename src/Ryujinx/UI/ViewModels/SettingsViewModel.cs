@@ -170,6 +170,8 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public bool IsOpenGLAvailable => !OperatingSystem.IsMacOS();
 
+        public bool IsKosmicKrispAvailable => OperatingSystem.IsMacOSVersionAtLeast(15);
+
         public bool EnableDiscordIntegration { get; set; }
         public bool ShowConfirmExit { get; set; }
         public bool IgnoreApplet { get; set; }
@@ -307,8 +309,8 @@ namespace Ryujinx.Ava.UI.ViewModels
         public bool IsAudioToolboxEnabled { get; set; }
         public bool IsCustomResolutionScaleActive => _resolutionScale == 4;
         public bool IsScalingFilterActive => _scalingFilter == (int)Ryujinx.Common.Configuration.ScalingFilter.Fsr;
-        public bool IsVulkanSelected => (GraphicsBackend)GraphicsBackendIndex == GraphicsBackend.Vulkan && !OperatingSystem.IsMacOS();
- 
+        public bool IsVulkanSelected => (GraphicsBackend)GraphicsBackendIndex == GraphicsBackend.Vulkan;
+
         public bool UseHypervisor { get; set; }
         public bool GCLowLatency { get; set; }
         public bool DisableP2P { get; set; }
@@ -356,6 +358,17 @@ namespace Ryujinx.Ava.UI.ViewModels
         public int BaseStyleIndex { get; set; }
 
         public int GraphicsBackendIndex
+        {
+            get;
+            set
+            {
+                field = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsVulkanSelected));
+            }
+        }
+
+        public int TranslationLayerIndex
         {
             get;
             set
@@ -572,7 +585,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             if (devices.Length == 0)
             {
                 IsVulkanAvailable = false;
-                GraphicsBackendIndex = 2;
+                GraphicsBackendIndex = 1;
             }
             else
             {
@@ -721,6 +734,7 @@ namespace Ryujinx.Ava.UI.ViewModels
 
             // Graphics
             GraphicsBackendIndex = (int)config.Graphics.GraphicsBackend.Value;
+            TranslationLayerIndex = (int)config.Graphics.TranslationLayer.Value;
             // Physical devices are queried asynchronously hence the preferred index config value is loaded in LoadAvailableGpus().
             EnableShaderCache = config.Graphics.EnableShaderCache;
             EnableTextureRecompression = config.Graphics.EnableTextureRecompression;
@@ -838,6 +852,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             config.Graphics.EnableCustomVSyncInterval.Value = EnableCustomVSyncInterval;
             config.Graphics.CustomVSyncInterval.Value = CustomVSyncInterval;
             config.Graphics.GraphicsBackend.Value = (GraphicsBackend)GraphicsBackendIndex;
+            config.Graphics.TranslationLayer.Value = (TranslationLayer)TranslationLayerIndex;
             config.Graphics.PreferredGpu.Value = _gpuIds.ElementAtOrDefault(PreferredGpuIndex);
             config.Graphics.EnableShaderCache.Value = EnableShaderCache;
             config.Graphics.EnableTextureRecompression.Value = EnableTextureRecompression;
