@@ -21,6 +21,7 @@ namespace Ryujinx.Graphics.Vulkan
         private readonly bool _concurrentFenceWaitUnsupported;
         private readonly CommandPool _pool;
         private readonly Thread _owner;
+        private readonly FencePool _fencepool;
 
         public bool OwnedByCurrentThread => _owner == Thread.CurrentThread;
 
@@ -74,6 +75,7 @@ namespace Ryujinx.Graphics.Vulkan
             _queueLock = queueLock;
             _concurrentFenceWaitUnsupported = concurrentFenceWaitUnsupported;
             _owner = Thread.CurrentThread;
+            _fencepool = new FencePool(_api, _device);
 
             CommandPoolCreateInfo commandPoolCreateInfo = new()
             {
@@ -349,7 +351,7 @@ namespace Ryujinx.Graphics.Vulkan
 
             if (refreshFence)
             {
-                entry.Fence = new FenceHolder(_api, _device, _concurrentFenceWaitUnsupported);
+                entry.Fence = new FenceHolder(_api, _device, _concurrentFenceWaitUnsupported, _fencepool);
             }
             else
             {
@@ -365,6 +367,7 @@ namespace Ryujinx.Graphics.Vulkan
             }
 
             _api.DestroyCommandPool(_device, _pool, null);
+            _fencepool.Dispose();
         }
     }
 }
