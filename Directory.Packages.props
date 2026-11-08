@@ -59,4 +59,5 @@
     <PackageVersion Include="System.Management" Version="9.0.2" />
     <PackageVersion Include="UnicornEngine.Unicorn" Version="2.0.2-rc1-fb78016" />
   </ItemGroup>
+  <ItemGroup><PackageVersion Include="Ryujinx.SDL3-CS" Version="2026.707.0" /></ItemGroup>
 </Project>

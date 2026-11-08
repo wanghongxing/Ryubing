@@ -180,4 +180,5 @@
   <ItemGroup>
     <AdditionalFiles Include="..\..\assets\locales.json" />
   </ItemGroup>
+  <ItemGroup><ProjectReference Include="..\Ryujinx.Input.SDL3\Ryujinx.Input.SDL3.csproj" /></ItemGroup>
 </Project>

@@ -25,7 +25,10 @@ namespace Ryujinx.SDL2.Common
 
         public static Action<Action> MainThreadDispatcher { get; set; }
 
-        private const uint SdlInitFlags = SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO | SDL_INIT_VIDEO;
+        // The GUI uses SDL3 for gamepads; headless keeps its original SDL2 input.
+        public static bool EnableGamepadInput { get; set; } = true;
+
+        private const uint SdlInitFlags = SDL_INIT_EVENTS | SDL_INIT_AUDIO | SDL_INIT_VIDEO;
 
         private bool _isRunning;
         private uint _refereceCount;
@@ -69,7 +72,7 @@ namespace Ryujinx.SDL2.Common
                 // We disable this behavior for now.
                 SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_COMBINE_JOY_CONS, "0");
 
-                if (SDL_Init(SdlInitFlags) != 0)
+                if (SDL_Init(SdlInitFlags | (EnableGamepadInput ? SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK : 0)) != 0)
                 {
                     string errorMessage = $"SDL2 initialization failed with error \"{SDL_GetError()}\"";
 

@@ -132,7 +132,8 @@ namespace Ryujinx.Ava
             // Initialize Discord integration.
             DiscordIntegrationModule.Initialize();
 
-            // Initialize SDL2 driver
+            // Dispatch SDL2 window/audio and SDL3 gamepad events on the UI thread
+            Ryujinx.SDL3.Common.SDL3Driver.MainThreadDispatcher = action => Dispatcher.UIThread.InvokeAsync(action, DispatcherPriority.Input);
             SDL2Driver.MainThreadDispatcher = action => Dispatcher.UIThread.InvokeAsync(action, DispatcherPriority.Input);
 
             ReloadConfig();
